@@ -7,7 +7,7 @@ const websiteNameEl = document.getElementById('website-name');
 const websiteUrlEl = document.getElementById('website-url');
 const bookmarksContainer = document.getElementById('bookmarks-container');
 
-const bookmarks = [];
+let bookmarks = [];
 
 function showModal() {
     modal.classList.add('show-modal');
@@ -37,12 +37,42 @@ function validate(nameValue, urlValue) {
     }
     return true;
 }
+function buildBookmarks() {
+    bookmarks.forEach(bookmark => {
+        const { name, url } = bookmark;
+        const item = document.createElement('div');
+        item.classList.add('item');
+
+        const closeIcon = document.createElement('i');
+        closeIcon.classList.add('fas', 'fa-times');
+        closeIcon.setAttribute('title', 'Delete Bookmark');
+        closeIcon.setAttribute('onclick', `deleteBookmark('${url}')`);
+
+        const linkInfo = document.createElement('div');
+        linkInfo.classList.add('name');
+
+        const favicon = document.createElement('img');
+        favicon.setAttribute('src', `https://s2.googleusercontent.com/s2/favicons?domain=${url}`);
+        favicon.setAttribute('alt', 'Favicon');
+
+        const link = document.createElement('a');
+        link.setAttribute('href', `${url}`);
+        link.setAttribute('target', '_blank');
+        link.textContent = name;
+
+        linkInfo.append(favicon, link);
+        item.append(closeIcon, linkInfo);
+        bookmarksContainer.appendChild(item);
+    });
+}
+
 function fetchBookmarks() {
     if (localStorage.getItem('bookmarks')) {
         bookmarks = JSON.parse(localStorage.getItem('bookmarks'));
     } else {
         localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
     }
+    buildBookmarks();
 }
 
 function storeBookmark(e) {
