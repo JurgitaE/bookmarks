@@ -1,6 +1,5 @@
 const modal = document.getElementById('modal');
 const modalShow = document.getElementById('show-modal');
-console.log(modalShow);
 const modalClose = document.getElementById('close-modal');
 const bookmarkForm = document.getElementById('bookmark-form');
 const websiteNameEl = document.getElementById('website-name');
@@ -38,6 +37,7 @@ function validate(nameValue, urlValue) {
     return true;
 }
 function buildBookmarks() {
+    bookmarksContainer.textContent = '';
     bookmarks.forEach(bookmark => {
         const { name, url } = bookmark;
         const item = document.createElement('div');
@@ -75,6 +75,16 @@ function fetchBookmarks() {
     buildBookmarks();
 }
 
+function deleteBookmark(url) {
+    bookmarks.forEach((bookmark, i) => {
+        if (url === bookmark.url) {
+            bookmarks.splice(i, 1);
+        }
+    });
+    localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
+    fetchBookmarks();
+}
+
 function storeBookmark(e) {
     e.preventDefault();
     const nameValue = websiteNameEl.value;
@@ -94,6 +104,7 @@ function storeBookmark(e) {
     };
     bookmarks.push(bookmark);
     localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
+    fetchBookmarks();
     bookmarkForm.reset();
     websiteNameEl.focus();
 }
